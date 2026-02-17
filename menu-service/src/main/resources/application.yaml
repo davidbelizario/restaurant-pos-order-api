@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: menu-service
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/menu-service}
+      auto-index-creation: true
+
+server:
+  port: 8081

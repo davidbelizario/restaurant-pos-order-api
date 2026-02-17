@@ -1,0 +1,67 @@
+spring:
+  application:
+    name: order-service
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/menu-service}
+      auto-index-creation: true
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+
+server:
+  port: 8082
+
+menu:
+  service:
+    url: ${MENU_SERVICE_URL:http://localhost:8081}
+
+rabbitmq:
+  queue:
+    name: order-status-notification
+  exchange:
+    name: order-exchange
+  routing:
+    key: order.status
+
+resilience4j:
+  circuitbreaker:
+    circuitBreakerAspectOrder: 1
+    instances:
+      menuService:
+        register-health-indicator: true
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-type: COUNT_BASED
+        automatic-transition-from-open-to-half-open-enabled: true
+  retry:
+    retryAspectOrder: 2
+    instances:
+      menuService:
+        max-attempts: 3
+        wait-duration: 1s
+        retry-exceptions:
+          - java.lang.Exception
+        ignore-exceptions:
+          - com.allo.restaurant.order.exception.MenuItemNotFoundException
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+
+logging:
+  level:
+    io.github.resilience4j: DEBUG

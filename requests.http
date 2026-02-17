@@ -1,0 +1,85 @@
+@menuBaseUrl = http://localhost:8081
+@orderBaseUrl = http://localhost:8082
+
+
+###############################################
+###               MENU SERVICE              ###
+###############################################
+
+### Create Menu Item and save ID
+POST {{menuBaseUrl}}/menu-items
+Content-Type: application/json
+
+{
+  "name": "Pizza",
+  "description": "Delicious pizza",
+  "price": 9.99
+}
+
+###
+
+### Get All Menu Items (Paginated)
+GET {{menuBaseUrl}}/menu-items?limit=10&offset=0
+
+###
+
+### Get Menu Item by ID
+GET {{menuBaseUrl}}/menu-items/{{ menuItemId }}
+
+###
+
+### Update Menu Item
+PUT {{menuBaseUrl}}/menu-items/{{ menuItemId }}
+Content-Type: application/json
+
+{
+  "name": "Large Pizza",
+  "description": "Cheese pizza with extra toppings",
+  "price": 11.99
+}
+
+###
+
+### Delete Menu Item
+DELETE {{menuBaseUrl}}/menu-items/{{ menuItemId }}
+
+
+###############################################
+###              ORDER SERVICE              ###
+###############################################
+
+### Create Order using the Menu Item ID
+POST {{orderBaseUrl}}/orders
+Content-Type: application/json
+
+{
+  "customer": {
+    "fullName": "John Doe",
+    "address": "123 Main St",
+    "email": "john@example.com"
+  },
+  "orderItems": [
+    { "productId": "{{ menuItemId }}", "quantity": 2 }
+  ]
+}
+
+
+###
+
+### Update Order Status
+PATCH {{orderBaseUrl}}/orders/{{ orderId }}/status
+Content-Type: application/json
+
+{
+  "status": "DELIVERED"
+}
+
+###
+
+### Get Order History (Paginated)
+GET {{orderBaseUrl}}/orders?limit=10&offset=0
+
+###
+
+### Get Order by ID
+GET {{orderBaseUrl}}/orders/{{ orderId }}
