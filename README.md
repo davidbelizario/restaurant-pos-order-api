@@ -91,6 +91,18 @@ Responsible for **managing customer orders**, including creation, status updates
 
 **Port:** `8082`
 
+### Standardized Error Responses
+
+Both services implement a **Global Exception Handler** (`@RestControllerAdvice`) that ensures all API errors follow a consistent JSON structure:
+
+```json
+{
+  "timestamp": "2026-02-17T12:00:00.000",
+  "status": 400,
+  "error": "Validation Failed",
+  "message": "..."
+}
+```
 ---
 
 ## 🛡️ Resilience — Circuit Breaker & Retry
